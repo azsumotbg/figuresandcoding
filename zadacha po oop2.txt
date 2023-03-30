@@ -1,0 +1,77 @@
+import java.io.*;
+import java.util.ArrayList;
+
+public class GeometryApp {
+    private ArrayList<Shape> shapes;
+
+    public GeometryApp() {
+        shapes = new ArrayList<Shape>();
+    }
+
+    public void loadShapesFromFile(String fileName) {
+        try {
+            File file = new File(fileName);
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                String[] tokens = line.split(",");
+                if (tokens.length == 3 && tokens[0].equalsIgnoreCase("circle")) {
+                    double radius = Double.parseDouble(tokens[1]);
+                    double x = Double.parseDouble(tokens[2]);
+                    double y = Double.parseDouble(tokens[3]);
+                    Circle circle = new Circle(radius, x, y);
+                    shapes.add(circle);
+                } else if (tokens.length == 4 && tokens[0].equalsIgnoreCase("rectangle")) {
+                    double width = Double.parseDouble(tokens[1]);
+                    double height = Double.parseDouble(tokens[2]);
+                    double x = Double.parseDouble(tokens[3]);
+                    double y = Double.parseDouble(tokens[4]);
+                    Rectangle rectangle = new Rectangle(width, height, x, y);
+                    shapes.add(rectangle);
+                } else {
+                    System.out.println("Unknown shape: " + line);
+                }
+            }
+            fileReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void performOperations() {
+        
+        for (Shape shape : shapes) {
+          
+        }
+    }
+
+    public void saveShapesToFile(String fileName) {
+        try {
+            FileWriter fileWriter = new FileWriter(fileName);
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+            for (Shape shape : shapes) {
+                if (shape instanceof Circle) {
+                    Circle circle = (Circle) shape;
+                    bufferedWriter.write("circle," + circle.getRadius() + "," + circle.getX() + "," + circle.getY());
+                } else if (shape instanceof Rectangle) {
+                    Rectangle rectangle = (Rectangle) shape;
+                    bufferedWriter.write("rectangle," + rectangle.getWidth() + "," + rectangle.getHeight() + "," + rectangle.getX() + "," + rectangle.getY());
+                } else {
+                    System.out.println("Unknown shape: " + shape);
+                }
+                bufferedWriter.newLine();
+            }
+            bufferedWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        GeometryApp app = new GeometryApp();
+        app.loadShapesFromFile("shapes.txt");
+        app.performOperations();
+        app.saveShapesToFile("shapes_out.txt");
+    }
+}
